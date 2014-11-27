@@ -11,7 +11,10 @@ function [base,ed,mean,projX] = pcaimg(X,k)
 disp('eigendecomposition...');
 [xdim,ndata] = size(X);
 mean = sum(X,2)/ndata;  % compute mean of data
+
+%Y = repmat(mean,1,ndata);
 X = X-repmat(mean,1,ndata); % substract the mean
+
 cov = X*X'/ndata;  % form the covariance matrix
 
 [ev,ed]=eig(cov);  %eigendecomposition
