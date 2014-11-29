@@ -23,7 +23,8 @@ for epoch = 1:num_epochs
      colormap(gray)
   end
   logit = W2' * h_output + repmat(b2, 1, num_train_cases);  % Input to output layer.
-  prediction = 1 ./ (1 + exp(-logit));  % Output prediction. (7xN matrix)
+  %prediction = 1 ./ (1 + exp(-logit));  % Output prediction. (7xN matrix)
+  prediction = exp(-logit)./repmat(sum(exp(-logit)),size(logit,1),1);
 
   [~, pred_max] = max(prediction);
   % Compute cross entropy
@@ -73,7 +74,8 @@ for epoch = 1:num_epochs
   h_input = W1' * inputs_valid + repmat(b1, 1, num_valid_cases);  % Input to hidden layer.
   h_output = 1 ./ (1 + exp(-h_input));  % Output of hidden layer.
   logit = W2' * h_output + repmat(b2, 1, num_valid_cases);  % Input to output layer.
-  prediction = 1 ./ (1 + exp(-logit));  % Output prediction.
+  %prediction = 1 ./ (1 + exp(-logit));  % Output prediction.
+  prediction = exp(-logit)./repmat(sum(exp(-logit)),size(logit,1),1);
   valid_CE = mean(mean((target_valid == 1)' .* log(prediction(1,:)) + ...
                         (target_valid == 2)' .* log(prediction(2,:)) + ...
                         (target_valid == 3)' .* log(prediction(3,:)) + ...
