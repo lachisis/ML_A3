@@ -12,9 +12,9 @@ if (~exist('tr_identity', 'var'))
 
   foldsize = floor(ntr/nfold);
   for i=1:nfold-1
-    foldids{i} = (i-1)*foldsize+1:(i*foldsize);
+    foldids{i} = perm((i-1)*foldsize+1:(i*foldsize));
   end
-  foldids{nfold} = (nfold-1)*foldsize+1:ntr;
+  foldids{nfold} = perm((nfold-1)*foldsize+1:ntr);
 else
   % generally one uses random permutation to specify the splits, but because of the special structure of the dataset
   % we use the identity of poeple for this purpose.
@@ -45,6 +45,7 @@ else
 end
 
 % perform nfold training and validation
+acc = zeros(nfold,1);
 for i=1:nfold
   traini_ids = [foldids{[1:(i-1) (i+1):nfold]}];
   testi_ids = foldids{i};
@@ -54,16 +55,19 @@ for i=1:nfold
   target_train = tr_labels(traini_ids);
   target_valid = tr_labels(testi_ids);
   
-  num_hiddens = n_hiddens;
-
-  run_q5
+  epochs = 330;
   
-  %predi = knn_classifier_for_PCA(K, tr_images(:, traini_ids), tr_labels(traini_ids), tr_images(:, testi_ids));
+  results = train_nn_classifier(inputs_train, target_train,n_hiddens,7,epochs);
+  weights = results{1}
+  
+  validation_error = evaluate_nn_classifier(inputs_valid,target_valid,weights);
+  
+  %predi = kn_classifier_for_PCA(K, tr_images(:, traini_ids), tr_labels(traini_ids), tr_images(:, testi_ids));
   
   % display([predi'; tr_labels(testi_ids)']);
   
   %acc(i) = sum(predi == tr_labels(testi_ids))/length(foldids{i});
-  acc(i) = 1-valid_CE;
+  acc(i) = 1-validation_error;
 end
 
 mean_acc = mean(acc);
