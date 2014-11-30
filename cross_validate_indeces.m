@@ -2,7 +2,7 @@
 % If tr_identity is provided, uses that to do the split of the training images
 % If tr_identity is not provided uses random permutations (disregards similar faces, bias in the training data)
 
-function [cross_val_train_ids, cross_val_valid_ids] = cross_validate_indeces(tr_images, nfold, tr_identity)
+function [cross_val_train_inds, cross_val_valid_inds] = cross_validate_indeces(tr_images, nfold, tr_identity)
 
 ntr = size(tr_images, 3);
 
@@ -45,14 +45,14 @@ else
 end
 
 % perform nfold training and validation
-cross_val_train_ids = cell(1,nfold);
-cross_val_valid_ids = cell(1,nfold);
+cross_val_train_inds = cell(1,nfold);
+cross_val_valid_inds = cell(1,nfold);
 for i=1:nfold
   traini_ids = [foldids{[1:(i-1) (i+1):nfold]}];
   testi_ids = foldids{i};
   
-  cross_val_train_ids{i} = traini_ids;
-  cross_val_valid_ids{i} = testi_ids;
+  cross_val_train_inds{i} = traini_ids;
+  cross_val_valid_inds{i} = testi_ids;
 end
 
 end
