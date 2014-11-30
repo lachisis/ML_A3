@@ -50,7 +50,7 @@ rate_error_record = zeros(1, num_epochs);
 %% training
 for epoch = 1:num_epochs
    
-    fprintf('starting epoch %d\n',epoch);
+    %fprintf('starting epoch %d\n',epoch);
     results = run_nn_classifier(inputs, weights);
     
     output = results{1};
