@@ -1,11 +1,12 @@
+load labeled_images
 % Test Parameters
 input = collapse_image_matrix(tr_images);
 labels = tr_labels;
 identity = tr_identity;
-n_hiddens = 600;
-num_models = 5;
-plotting_interval = 20;
-max_epochs = 1000; %if not a multiple of plotting_interval, total epochs will be less
+n_hiddens = 700;
+num_models = 1;
+plotting_interval = 2;
+max_epochs = 200; %if not a multiple of plotting_interval, total epochs will be less
 
 % Automatic initialization
 nfold = num_models + 1;
@@ -24,8 +25,8 @@ clear weights;
 for i = 1:num_models
    fprintf('starting training on model %d\n',i);
    
-   train_input{i} = input(cross_val_train_inds{i});
-   valid_input{i} = input(cross_val_valid_inds{i});
+   train_input{i} = input(:,cross_val_train_inds{i});
+   valid_input{i} = input(:,cross_val_valid_inds{i});
    train_labels{i} = labels(cross_val_train_inds{i});
    valid_labels{i} = labels(cross_val_train_inds{i});
    
@@ -39,7 +40,7 @@ end
 
 %%
 % Validation
-test_input = input(cross_val_train_inds{nfold});
+test_input = input(:,cross_val_train_inds{nfold});
 test_labels = labels(cross_val_train_inds{nfold});
 num_samples = length(test_labels);
 result_votes = zeros(n_classes,num_samples,num_models);
@@ -55,8 +56,10 @@ for interval = 1:num_intervals
     accuracy(interval) = (sum(sum(ind2vec(test_labels') & ind2vec(predictions))) / num_samples);
 end
 
+%%
 figure(1)
+plot(plotting_interval:plotting_interval:max_epochs, accuracy);
 title(sprintf('Results after averaging RAW OUTPUT from %d NNs',num_models));
 ylabel('accuracy');
 xlabel('epochs trained');
-plot(plotting_interval:plotting_interval:max_epochs, accuracy)
+
