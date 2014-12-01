@@ -4,7 +4,7 @@
 
 function [cross_val_train_inds, cross_val_valid_inds] = cross_validate_indeces(tr_images, nfold, tr_identity)
 
-ntr = size(tr_images, 3);
+ntr = size(tr_images, 2);
 
 if (~exist('tr_identity', 'var'))
   % random permutation (disregards similar faces)
